@@ -99,6 +99,12 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_clear_all) {
+            dbManager.dropTable();
+            dbManager.open();
+            Cursor cursor = dbManager.fetch();
+            adapter = new SimpleCursorAdapter(this, R.layout.adapter, cursor, from, to, 0);
+            listView.setAdapter(adapter);
+            Snackbar.make(listView, "Database Deleted!", Snackbar.LENGTH_LONG).show();
             return true;
         }
 

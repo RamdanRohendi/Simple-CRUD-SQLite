@@ -5,16 +5,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-public class DatabaseManager extends DatabaseHelper {
+public class DatabaseManager {
     private DatabaseHelper dbHelper;
     private SQLiteDatabase database;
 
     public DatabaseManager(Context c) {
-        super(c);
+        dbHelper = new DatabaseHelper(c);
     }
 
     public void open() {
-        database = this.getWritableDatabase();
+        database = dbHelper.getWritableDatabase();
         database.isOpen();
     }
 
@@ -29,7 +29,7 @@ public class DatabaseManager extends DatabaseHelper {
     }
 
     public void insert(String myInputTitle, String myInputDesc) {
-        database = this.getWritableDatabase();
+        database = dbHelper.getWritableDatabase();
         String query = "INSERT INTO " + dbHelper.TABLE_NAME + " (Title, Description) " +
                 "VALUES ('" + myInputTitle + "', '" + myInputDesc + "')";
 
@@ -39,7 +39,7 @@ public class DatabaseManager extends DatabaseHelper {
     }
 
     public void update(int Id, String newTitle, String newDesc) {
-        database = this.getWritableDatabase();
+        database = dbHelper.getWritableDatabase();
         String query = "UPDATE " + dbHelper.TABLE_NAME + " SET "
                 + dbHelper.TITLE + "='" + newTitle + "', "
                 + dbHelper.DESC + "='" + newDesc + "'"
@@ -51,11 +51,17 @@ public class DatabaseManager extends DatabaseHelper {
     }
 
     public void delete(int Id) {
-        database = this.getWritableDatabase();
+        database = dbHelper.getWritableDatabase();
         String query = "DELETE FROM " + dbHelper.TABLE_NAME + " WHERE " + dbHelper._ID + "=" + "'" + Id + "'";
 
         Log.e("delete sqlite ", query);
         database.execSQL(query);
+        database.close();
+    }
+
+    public void dropTable() {
+        database = dbHelper.getWritableDatabase();
+        dbHelper.onUpgrade(database, 0, 0);
         database.close();
     }
 
